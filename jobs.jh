@@ -6,6 +6,10 @@ entity Country {
 	countryName String
 }
 
+entity Test {
+    TestName String
+}
+
 // an ignored comment
 /** not an ignored comment */
 entity Location {
