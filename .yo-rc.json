@@ -32,6 +32,8 @@
     "jhipsterVersion": "4.14.3",
     "packageFolder": "antoniohgarcia/application",
     "jwtSecretKey": "c0faa929dc5ce2615b0916c9fdebc2464351870e",
-    "jhiPrefix": "jhi"
+    "jhiPrefix": "jhi",
+    "herokuDeployType": "git",
+    "herokuAppName": "still-eyrie-23122"
   }
 }
