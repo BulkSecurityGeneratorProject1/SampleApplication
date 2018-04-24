@@ -6,6 +6,9 @@ entity Country {
 	countryName String
 }
 
+entity Tesval {
+	testvalName String
+}
 entity Test {
     testName String,
     versionName String
