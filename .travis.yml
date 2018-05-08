@@ -16,6 +16,7 @@ cache:
     - $HOME/.yarn-cache
 env:
   global:
+    - IMAGE_NAME=antoniohgarcia/sampleapplication
     - secure: "Y151ipplvOKGNFJN05DbWQ9MNWlyvJbmPwQIqjY6AqIok3nBGn7lRAS6+8a2GrkB2gkF3TQSK3qOMk6RvOSDoCe2zTbprBPyPKDFfHwEhj1wc3E03MKyAlSVA7CicDPr0YNXl2/vDuv1y2fSQcfI6GXYnBBbsSEoKdr6DkMza97zYw2UoMeSZGBfR7hkSPLk9BBx4Yd783/RR5kxatXBhobsGsn8J2Y7nj5uxPNqj8MytipHQYCGZ2sr9HW/OLYPc7s2HEwECl2TC9kEnpDSle5Zt7UmoEsrkO7DLi1+h/EGXfn8EO7JuMtV29jQLmzts+TO7ByB4OE1egD3NTeDKuUvzk+nAofZV0YTnf7wnQwYTibNllug7IXK2sBxpM6OKdRkpXEm+YtLqXSWtUFJnFWDbFCw/iouv4ivJrjCmQR9ePSc+Bu8vEvCCBko6pxhn5gdEC1LLT6tmseys5IldIQvmtQK1N4Q5y5LILUcdBzhRUoDPaihxGUOLaxOxP9nvMNHzzoGn6PdpmZur8owSujsb99gg31dCBV1t+ESdWdvquyspPJhOtvMyO7l3QSgmZ86AWiLBwJp93ASqLe2JC3wzFTZulY06mPrWZxZy4t/PzYQL3xeMWFo+JSgM6NKaXUNkFfe1ZLI2P0B7V4yESzCl8n5YrNcUcq5CFFQBqE="
     - secure: "SOIiaVR6r33BYA8QCpTAjBcVqQ9mNRXhAmsPgfupmUDcabur+dGKcO1J34c0zodIlZ0DFgUx6VTrehwOC8qYecFllBbV+01rcFZvgrS9z2r+edIG0wrFu88YZ0uH1nJ7Go54BbShhMt4KzYe5Dw5+nZM4VZO+ME0/JmYrsPDHAa6fIJcrSKN9xavc+QKVb9TBtga8hrKEljnnGUq/mtScMRtAtSgzYyR8QkIVy/+Po2Zwc/tn4m9XYfhJDvDp1g4ZMt/W+P75dc5qUk/YtbsezXNQDwUZ2P9deXp+BpdwMrZvmanugcGWimROzv2As+yZXXyis933e9MrKOdKt1foLYyld2Mjk4qzqhUTxR9kb9KDrKAbgnATHVY3G2fSABKN+hVqPo0Dve67S0lh2AihQ3ICemxm5mOKRvQQ3KudYqqZuD9QzpKs+rBGvoZrm6Ux+pCVWag4FqCeFOoxoz4wn+ICx02CN6q0TBkQfnLIHdI02zYExPmJqXhzZ5U1FpmvSlQdP0Z5Ya9pMR5DGQYBUZiR0UkpJZ2U+uxsF7e6r/Q0W1gvoei+lxXvqM8hC+bTB0B5MR9YSo6q2W03mJVdaC7qWqejadcb7zRQHoflXw8T1YzHiz0MTe599/da0eiQCLxvNd0IX07cBeLl3DSa+23yBjOjlzBOtFVDXk9HV8="
     - secure: "ASgCFB53sIEMtrPUhmZWCJ9Qpi54YPtLqn4PxJFslsoh5Lqw/bikUdeouQhV+qbr2i2AvCKaxGFrD9FOdoMK75tpqap5PJhHnhY9WIUisNU51jN8LT0wjEbD1MnqkaXbhiAkIO0Ddfbn7bdSVilEC4PyD/KIrelesFEv47uzNhEMEgUa/kClRAVmjCRy7K0cTn+Refci+5l1tnRMRf5ft9C98J2NecRDGw2ckfh2ShjoSUNTKVl3S6KhtR4hINHfd+67r5aCdXBpBkiNnjIMHDQAuLKtu5r6BVxcea71UlgmXx9cz0GqYszNP89lyHUNwUqtBco6MccDPjovz8ZQbbx1RiWE2oBGElfKYlTERKKpzYBMokWsgcIRYVmo8jFjkWznelEHLu6k0aYBKPdmkBoZW28Nc4IjW8BzkpcJ8wTI/0psvkaNILimmnw+NYyycEc5n/7QHwTVwTq9dpQgkVCT73B/Gk6BUc2kJmzM/v0VTa018EmOZ8F8pcY6u0RuHK2m9eJFrYHmOtCwsOYDD1dwGMZj54yuMLb0ooDnBUSz38XqJn8fkj+4yAqX3Bssbr478Ta3gegqseLFunnc+uGdmaThUzZa83ekIv3IO2PhOKv2ZbX0IokHqQfuY8k5pgIfqrzKURlrR+2OBaP7Vw5u/nLXkCTi0+mzZUSe34g="
@@ -37,14 +38,21 @@ script:
   - chmod +x mvnw
   - ./mvnw clean test
   - yarn test
-  - ./mvnw verify -Pprod -DskipTests
+  - ./mvnw verify -Pprod -DskipTests dockerfile:build
+before_deploy:
+  - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
+  - git_sha="$(git rev-parse --short HEAD)"
+  - docker tag "$IMAGE_NAME" "${IMAGE_NAME}:develop"
+  - docker tag "$IMAGE_NAME" "${IMAGE_NAME}:${git_sha}-develop"  
+deploy:
+  provider: script
+  script: docker push "${IMAGE_NAME}:develop" && docker push "${IMAGE_NAME}:${git_sha}-develop"
+  on:
+branch: develop
+
 after_success:
   - docker login -u $DOCKER_USER -p $DOCKER_PASS
   - export REPO=antoniohgarcia/sampleapplication
-  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
-  - docker build -f Dockerfile -t $REPO:$COMMIT .
-  - docker tag $REPO:$COMMIT $REPO:$TAG
-  - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
   - docker push $REPO
 notifications:
   webhooks:
