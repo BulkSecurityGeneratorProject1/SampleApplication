@@ -42,18 +42,18 @@ script:
 before_deploy:
   - docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
   - git_sha="$(git rev-parse --short HEAD)"
-  - docker tag "$IMAGE_NAME" "${IMAGE_NAME}:develop"
-  - docker tag "$IMAGE_NAME" "${IMAGE_NAME}:${git_sha}-develop"  
+  - docker tag "$IMAGE_NAME" "antoniohgarcia/${IMAGE_NAME}:develop"
+  - docker tag "$IMAGE_NAME" "antoniohgarcia/${IMAGE_NAME}:${git_sha}-develop"  
 deploy:
   provider: script
-  script: docker push "${IMAGE_NAME}:develop" && docker push "${IMAGE_NAME}:${git_sha}-develop"
+  script: docker push "antoniohgarcia/${IMAGE_NAME}:develop" && docker push "antoniohgarcia/${IMAGE_NAME}:${git_sha}-develop"
   on:
 branch: develop
 
 after_success:
   - docker login -u $DOCKER_USER -p $DOCKER_PASS
   - export REPO=sampleapplication
-  - docker push $REPO
+  - docker push antoniohgarcia/$REPO
 notifications:
   webhooks:
     on_success: change  # options: [always|never|change] default: always
