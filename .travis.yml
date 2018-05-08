@@ -46,13 +46,13 @@ before_deploy:
   - docker tag "$IMAGE_NAME" "${IMAGE_NAME}:${git_sha}-develop"  
 deploy:
   provider: script
-  script: docker push "antoniohgarcia/${IMAGE_NAME}:develop" && docker push "${IMAGE_NAME}:${git_sha}-develop"
+  script: docker push "${IMAGE_NAME}:develop" && docker push "${IMAGE_NAME}:${git_sha}-develop"
   on:
 branch: develop
 
 after_success:
   - docker login -u $DOCKER_USER -p $DOCKER_PASS
-  - export REPO=antoniohgarcia/sampleapplication
+  - export REPO=sampleapplication
   - docker push $REPO
 notifications:
   webhooks:
