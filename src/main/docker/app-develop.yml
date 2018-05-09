@@ -1,7 +1,7 @@
 version: '2'
 services:
     sampleapplication-app:
-        image: antoniohgarcia/sampleapplication
+        image: antoniohgarcia/sampleapplication:develop
         environment:
             - SPRING_PROFILES_ACTIVE=prod,swagger
             - SPRING_DATASOURCE_URL=jdbc:mysql://sampleapplication-mysql:3306/sampleapplication?useUnicode=true&characterEncoding=utf8&useSSL=false
