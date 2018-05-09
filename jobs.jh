@@ -6,6 +6,15 @@ entity Country {
 	countryName String
 }
 
+entity Tesval {
+	testvalName String
+}
+
+entity House {
+
+     housesize Integer
+     housename String
+}
 entity Test {
     testName String,
     versionName String
